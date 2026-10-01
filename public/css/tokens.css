@@ -1,0 +1,34 @@
+/* css/tokens.css: 포장마차 night palette + 예능 자막 yellow */
+@font-face {
+  font-family: "DoHyeon";
+  src: url("/fonts/dohyeon-sub.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --ink:#141833; --paper:#FFFFFF; --night:#1B2150;
+  --caption:#FFD400; --tarp:#FF6A13; --good:#00A86B; --bad:#E8343A;
+  --p1:#FFD400; --p2:#FF6A13; --p3:#2EA8FF; --p4:#00A86B; --p5:#FF5FA8; --p6:#A77BFF;
+  --bg:var(--paper); --fg:var(--ink); --muted:#555B7A; --line:#D8DBE8;
+  --surface:#F3F4FA; --surface-2:#E8EAF4; --on-accent:var(--ink);
+  --font-body:"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic",system-ui,sans-serif;
+  --font-display:"DoHyeon",var(--font-body);
+  --fs-caption:clamp(44px,14vw,72px); --fs-title:30px; --fs-body:19px; --fs-small:15px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
+  --r-btn:18px; --r-card:12px;          /* buttons rounder than cards; captions square */
+  --tap:60px;                            /* minimum button height */
+  --focus:#2EA8FF;
+  color-scheme: light;
+}
+:root[data-theme="night"] {
+  --bg:var(--night); --fg:#F4F5FF; --muted:#A9AEDA; --line:#343B78;
+  --surface:#242B63; --surface-2:#2E3673; color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]) {
+    --bg:var(--night); --fg:#F4F5FF; --muted:#A9AEDA; --line:#343B78;
+    --surface:#242B63; --surface-2:#2E3673; color-scheme: dark;
+  }
+}
+body { background:var(--bg); color:var(--fg); font:400 var(--fs-body)/1.5 var(--font-body);
+       word-break:keep-all; overflow-wrap:anywhere; letter-spacing:-0.01em; }

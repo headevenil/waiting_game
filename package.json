@@ -1,0 +1,11 @@
+{
+  "name": "waiting-game",
+  "private": true,
+  "type": "module",
+  "description": "웨이팅 게임: Korean pass-the-phone party games for queues. No dependencies, no build step.",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\"",
+    "dev": "npx wrangler dev",
+    "deploy": "npx wrangler deploy"
+  }
+}

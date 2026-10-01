@@ -1,0 +1,129 @@
+/* css/games.css: game-specific pieces (talk screen, clue cards, sorter, dial, number scale) */
+
+.talk { display: flex; flex-direction: column; gap: var(--s4); flex: 1; }
+.talk > .caption { margin: var(--s3) 0; }
+.write { display: flex; flex-direction: column; gap: var(--s4); }
+.locked { font-weight: 800; color: var(--good); }
+
+/* ---------- 겹치면 꽝 deck ---------- */
+.deck { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.deck-dot {
+  aspect-ratio: 1; display: grid; place-items: center; border-radius: 6px; font-size: 13px; font-weight: 800;
+  background: var(--surface); color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.deck-dot.is-good { background: var(--good); color: #fff; }
+.deck-dot.is-bad { background: var(--bad); color: #fff; }
+.deck-dot.is-muted { background: var(--surface-2); }
+
+/* ---------- clue cards (겹치면 꽝, 사라지는 힌트) ---------- */
+.clue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+.clue-grid.is-big { grid-template-columns: 1fr; }
+.clue-card {
+  min-height: 72px; padding: var(--s3); border-radius: var(--r-card);
+  border: 2px solid var(--line); background: var(--surface); color: var(--fg); text-align: left;
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+}
+.clue-grid.is-big .clue-card { min-height: 80px; align-items: center; text-align: center; }
+.clue-text { font-family: var(--font-display); font-size: 30px; line-height: 1.15; }
+.clue-grid.is-big .clue-text { font-size: 36px; }
+.clue-card.is-picked { border-color: var(--ink); background: var(--caption); color: var(--ink); }
+.clue-card.is-dead .clue-text { text-decoration: line-through; text-decoration-thickness: 3px; color: var(--muted); }
+.clue-card.is-grey { background: var(--surface-2); border-style: dashed; }
+.clue-card.is-grey .clue-text { text-decoration: none; }
+.clue-tag { font-size: 13px; font-weight: 800; color: var(--bad); }
+.clue-card.is-erasable { cursor: pointer; }
+.clue-card.is-erasable:active { border-color: var(--bad); }
+.clue-card.is-crumbling { animation: crumble 380ms ease-in forwards; pointer-events: none; }
+@keyframes crumble {
+  30% { transform: rotate(-3deg) scale(1.02); }
+  100% { transform: translateY(24px) rotate(6deg) scale(.6); opacity: 0; filter: blur(2px); }
+}
+.clue-banner { font-family: var(--font-display); font-size: 30px; text-align: center; }
+.clue-banner .label { font-family: var(--font-body); vertical-align: middle; }
+
+/* ---------- 사라지는 힌트 judge ---------- */
+.guess-list { display: flex; flex-direction: column; gap: var(--s2); }
+.guess-row {
+  width: 100%; min-height: 64px; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s3);
+  border-radius: var(--r-card); border: 2px solid var(--line); background: var(--surface); text-align: left;
+  animation: rise 200ms ease both;
+}
+.guess-text { flex: 1; font-family: var(--font-display); font-size: 26px; }
+.guess-mark { font-weight: 800; font-size: 15px; padding: 4px 10px; border-radius: 999px; }
+.guess-row.is-ok { border-color: var(--good); }
+.guess-row.is-ok .guess-mark { background: var(--good); color: #fff; }
+.guess-row.is-no .guess-mark { background: var(--surface-2); color: var(--muted); }
+
+/* ---------- 1부터 10까지 ---------- */
+.theme-head { display: flex; flex-direction: column; gap: var(--s2); padding: var(--s3) var(--s4); background: var(--surface); border-radius: var(--r-card); }
+.theme-title { font-family: var(--font-display); font-size: clamp(26px, 7.5vw, 32px); line-height: 1.25; }
+.theme-ends { display: flex; justify-content: space-between; gap: var(--s3); font-size: 15px; font-weight: 700; color: var(--muted); }
+.memo-list { display: flex; flex-direction: column; gap: var(--s2); }
+.memo-card, .sort-card {
+  width: 100%; min-height: 72px; display: flex; align-items: center; gap: var(--s3); padding: var(--s2) var(--s3);
+  border-radius: var(--r-card); border: 2px solid var(--line); border-left: 10px solid var(--pc);
+  background: var(--surface); color: var(--fg); text-align: left;
+}
+.memo-card { flex-wrap: wrap; }
+.sort-rank { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); font-weight: 800; font-size: 15px; flex: none; }
+.sort-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.sort-name { font-weight: 800; font-size: 21px; }
+.sort-memo { font-size: 16px; color: var(--muted); }
+.sort-memo.is-empty { font-style: normal; opacity: .7; }
+.memo-card .sort-memo { flex-basis: 100%; padding-left: 40px; }
+.sorter-wrap { display: flex; flex-direction: column; gap: var(--s2); }
+.sorter-end { font-size: 15px; font-weight: 800; color: var(--muted); }
+.sorter { display: flex; flex-direction: column; gap: 8px; position: relative; }
+.sort-card { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: transform 160ms ease; }
+.sort-card.is-dragging { transition: none; z-index: 2; border-color: var(--ink); box-shadow: 0 10px 20px rgba(0,0,0,.18); position: relative; }
+.sort-card.is-moved { animation: bump 240ms ease; }
+@keyframes bump { 50% { background: var(--surface-2); } }
+.sort-arrows { display: flex; gap: 4px; }
+.arrow { width: 48px; height: 56px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 16px; }
+.arrow:disabled { opacity: .3; }
+.sorter.is-locked .sort-card { touch-action: auto; }
+.sort-number { position: relative; width: 56px; height: 56px; flex: none; perspective: 400px; }
+.sort-number > span {
+  position: absolute; inset: 0; display: grid; place-items: center; border-radius: 10px; backface-visibility: hidden;
+  font-family: var(--font-display); font-size: 34px; font-variant-numeric: tabular-nums;
+}
+.flip-back { background: var(--surface-2); color: var(--muted); animation: flip-out 300ms calc(var(--i, 0) * 600ms + 200ms) both; }
+.flip-front { background: var(--caption); color: var(--ink); border: 2px solid var(--ink); animation: flip-in 300ms calc(var(--i, 0) * 600ms + 350ms) both; }
+.sort-number.is-bad .flip-front { background: var(--bad); color: #fff; }
+@keyframes flip-out { to { transform: rotateY(90deg); } }
+@keyframes flip-in { from { transform: rotateY(-90deg); } to { transform: rotateY(0); } }
+
+.nscale { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+.nscale-cells { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+.nscale-cell {
+  aspect-ratio: 1 / 1.3; display: grid; place-items: center; border-radius: 6px; font-size: 13px; font-weight: 800;
+  background: color-mix(in srgb, var(--tarp) calc(8% + var(--i) * 9%), var(--surface)); color: var(--ink);
+}
+.nscale-cell.is-on { outline: 3px solid var(--ink); background: var(--caption); transform: scale(1.15); }
+.nscale-ends { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--muted); }
+
+/* ---------- 마음 다이얼 ---------- */
+.spectrum { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); font-weight: 800; font-size: 18px; }
+.spectrum span:nth-child(2) { color: var(--muted); }
+.dial-wrap { display: flex; flex-direction: column; gap: var(--s2); width: 100%; }
+.dial { width: 100%; height: auto; display: block; overflow: visible; }
+.dial-tune { touch-action: none; cursor: grab; }
+.dial-face { fill: var(--surface); stroke: var(--ink); stroke-width: 2.5; }
+.dial-ticks line { stroke: var(--muted); stroke-width: 2; }
+.band { stroke: var(--ink); stroke-width: 1; }
+.band-2 { fill: color-mix(in srgb, var(--tarp) 45%, var(--bg)); }
+.band-3 { fill: var(--tarp); }
+.band-4 { fill: var(--caption); }
+.dial-reveal .dial-band { transform-origin: 110px 110px; animation: sweep 420ms cubic-bezier(.2,.9,.3,1.1) 120ms both; }
+@keyframes sweep { from { transform: scale(.15) rotate(-30deg); opacity: 0; } }
+.dial-needle line { stroke: var(--ink); stroke-width: 5; stroke-linecap: round; }
+.dial-needle circle { fill: var(--ink); }
+:root[data-theme="night"] .dial-needle line, :root[data-theme="night"] .dial-face { stroke: #F4F5FF; }
+:root[data-theme="night"] .dial-needle circle { fill: #F4F5FF; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]) .dial-needle line, :root:not([data-theme="day"]) .dial-face { stroke: #F4F5FF; }
+  :root:not([data-theme="day"]) .dial-needle circle { fill: #F4F5FF; }
+}
+.dial-ends { display: flex; justify-content: space-between; gap: var(--s3); font-weight: 800; font-size: 16px; line-height: 1.3; }
+.dial-right { text-align: right; }
+.hold .dial-wrap { max-width: 360px; }
