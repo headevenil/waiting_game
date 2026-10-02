@@ -1,5 +1,5 @@
 // Precache + offline. Cache-first for everything; a new version waits until someone taps 업데이트.
-const VERSION = 'wg-2026-10-01f';            // bump on every deploy
+const VERSION = 'wg-2026-10-03a';            // bump on every deploy
 const FILES = [
   '/', '/index.html', '/manifest.webmanifest',
   '/css/tokens.css', '/css/base.css', '/css/components.css', '/css/games.css',

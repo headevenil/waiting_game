@@ -1,9 +1,0 @@
-# One word per line. Anything containing these (after normalisation) fails lint_content.py.
-# Brand and trademark names stay out of shipped packs (house packs can have them).
-디즈니
-미키마우스
-에버랜드
-롯데월드
-스타벅스
-맥도날드
-신라면

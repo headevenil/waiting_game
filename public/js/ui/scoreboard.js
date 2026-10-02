@@ -6,7 +6,7 @@ import { byId } from '../games/registry.js';
 const BEST_FORMAT = {
   dial: (n) => `${n}점`,
   scale10: (n) => `하트 ${n}개`,
-  kkwang: (n) => `${n}/10`,
+  kkwang: (n) => `${n}장`,
 };
 
 export function scoreboard({ roster, scores, bests = {} }) {

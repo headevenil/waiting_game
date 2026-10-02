@@ -1,4 +1,4 @@
-"""Content lint: schema, unique IDs, duplicate words after normalisation, decoys, banned words,
+"""Content lint: schema, unique IDs, duplicate words after normalisation, decoys,
 and (when the subset font exists) display-font coverage.
 
     python tools/lint_content.py
@@ -13,10 +13,11 @@ import unicodedata
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CONTENT = ROOT / 'public' / 'content'
 FONT = ROOT / 'public' / 'fonts' / 'dohyeon-sub.woff2'
-BANNED = ROOT / 'tools' / 'banned_words.txt'
 
-CATS = {'음식', '분식·간식', '술·안주', '장소', '동물', '물건', '직업', '학창 시절', '직장 생활', '여행', '놀이공원',
-        '스포츠·취미', '계절·날씨', '드라마·예능', '추억', '연애', '일상'}
+CATS = {'음식', '분식·간식', '편의점 간식', '과일', '술·안주', '장소', '프랜차이즈', '동물', '캐릭터', '물건', '브랜드', '직업',
+        '학창 시절', '직장 생활', '여행', '놀이공원', '스포츠·취미', '게임', '계절·날씨', '드라마·예능', '영화', '추억', '연애',
+        '일상'}
+TITLES = {'드라마·예능', '영화', '게임'}     # titles: exempt from the 2–6 syllable rule
 
 errors, warnings = [], []
 err = errors.append
@@ -81,7 +82,7 @@ for w in words:
     for a in w.get('aliases', []):
         if norm(a) == n:
             warn(f'{wid}: alias "{a}" is the same as the word after normalisation')
-    if w.get('cat') != '드라마·예능':
+    if w.get('cat') not in TITLES:
         syl = hangul_syllables(text)
         if syl and not 2 <= syl <= 6:
             warn(f'{wid}: "{text}" has {syl} syllables (rule: 2–6)')
@@ -94,17 +95,6 @@ for d in spectrums:
 for t in scales:
     if not t.get('theme') or not t.get('low') or not t.get('high'):
         err(f'{t.get("id")}: needs theme, low and high')
-
-# Banned words: one per line, '#' comments allowed.
-if BANNED.exists():
-    banned = [norm(l) for l in BANNED.read_text(encoding='utf-8').splitlines() if l.strip() and not l.startswith('#')]
-    all_text = [(w['id'], w.get('text', '')) for w in words] + [(w['id'], w.get('decoy', '')) for w in words] \
-        + [(d['id'], d.get('left', '') + d.get('right', '')) for d in spectrums] \
-        + [(t['id'], t.get('theme', '') + t.get('low', '') + t.get('high', '')) for t in scales]
-    for i, s in all_text:
-        for b in banned:
-            if b and b in norm(s):
-                err(f'{i}: contains banned word "{b}"')
 
 # Font coverage: every Hangul syllable in content must exist in the subset font.
 if FONT.exists():

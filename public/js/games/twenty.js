@@ -13,9 +13,10 @@ const OPTIONS = {
 const MIN_DISCUSS = 30;
 
 function secretFor(s, id) {
-  if (id === s.hostId) return { top: '당신은 진행자', big: s.word, bottom: '예 / 아니오 / 몰라요로만 답해요' };
-  if (id === s.helperId) return { top: '당신은 숨은 조력자', big: s.word, bottom: '들키지 않게 정답 쪽으로 이끌어요' };
-  return { top: '당신은 일반 참가자', big: '???', bottom: '질문으로 정답을 맞혀요' };
+  const team = '진행자 + 일반 참가자 한 편';
+  if (id === s.hostId) return { top: '당신은 진행자', big: s.word, bottom: '예 / 아니오 / 몰라요로만 답해요', side: team };
+  if (id === s.helperId) return { top: '당신은 숨은 조력자', big: s.word, bottom: '들키지 않게 정답 쪽으로 이끌어요', side: '나 혼자 한 편' };
+  return { top: '당신은 일반 참가자', big: '???', bottom: '질문으로 정답을 맞혀요', side: team };
 }
 
 function result(s) {
@@ -33,6 +34,11 @@ export default {
   id: 'twenty',
   title: '숨은 조력자 스무고개',
   rules: ['진행자와 숨은 조력자만 정답을 알아요.', '모두 진행자에게 예/아니오 질문! 제한 시간 4분.', '정답을 맞히면, 이제 숨은 조력자를 찾아요!'],
+  sides: [
+    { team: '진행자 팀', who: '진행자 + 일반 참가자', goal: '정답을 찾고, 숨은 조력자를 잡아요' },
+    { team: '숨은 조력자', who: '혼자', goal: '정답으로 몰래 이끌고, 끝까지 안 들켜요' },
+  ],
+  sidesNote: '시간 안에 정답을 못 찾으면 조력자까지 모두 져요.',
   players: { min: 4, max: 6, best: 5 },
   minutes: [5, 7],
   options: OPTIONS,

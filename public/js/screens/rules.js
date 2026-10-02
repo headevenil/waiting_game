@@ -7,6 +7,17 @@ import { sheet } from '../ui/sheet.js';
 
 const asChoice = (c) => (c && typeof c === 'object' ? c : { value: c, label: String(c) });
 
+// 누구 편? Who plays with whom, from the game's `sides` (also shown in the in-game rules sheet).
+export function sidesBlock(mod) {
+  if (!mod.sides?.length) return null;
+  return h('div', { class: 'sides-block' },
+    h('ul', { class: 'sides' }, mod.sides.map((x) => h('li', { class: 'side' },
+      h('span', { class: 'side-team' }, x.team),
+      h('span', { class: 'side-who' }, x.who),
+      h('span', { class: 'side-goal' }, x.goal)))),
+    mod.sidesNote ? h('p', { class: 'option-note' }, mod.sidesNote) : null);
+}
+
 export function rulesScreen(ctx, gameId) {
   const { store } = ctx;
   const mod = byId[gameId];
@@ -24,7 +35,7 @@ export function rulesScreen(ctx, gameId) {
       return [t.random, ...usable].map(asChoice);
     }
     const perPlayer = n >= mod.players.min ? n : mod.players.best;
-    return spec.choices.map(asChoice).map((c) => (c.perPlayer ? { ...c, label: `${c.label} (${perPlayer}판)` } : c));
+    return spec.choices.map(asChoice).map((c) => (c.perPlayer ? { ...c, label: `${c.label} (${perPlayer}${c.unit ?? '판'})` } : c));
   }
 
   const entries = Object.entries(mod.options);
@@ -72,6 +83,7 @@ export function rulesScreen(ctx, gameId) {
       h('section', { class: 'card' },
         h('h2', { class: 'section-title' }, t.howToPlay),
         h('ol', { class: 'rules-card' }, mod.rules.map((r) => h('li', {}, r)))),
+      mod.sides?.length ? h('section', { class: 'card' }, h('h2', { class: 'section-title' }, t.sides), sidesBlock(mod)) : null,
       entries.length ? section : null,
       problem ? h('p', { class: 'warn' }, problem, ' ', h('a', { href: '#/roster' }, t.editRoster)) : null),
     h('footer', { class: 'dock' }, btn(t.start, start, 'primary', { disabled: !!problem })));

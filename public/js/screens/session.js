@@ -15,6 +15,7 @@ import { byId } from '../games/registry.js';
 import { timerRunning } from '../games/common.js';
 import { clueError } from '../games/kkwang.js';
 import { writeError } from '../games/fading.js';
+import { sidesBlock } from './rules.js';
 
 // UI-only state. Never persisted, so a reload always lands back on the pass gate.
 let passedGate = null;
@@ -101,7 +102,10 @@ function openPause(c) {
 export function rulesSheet(mod) {
   sheet({
     title: mod.title,
-    body: h('ol', { class: 'rules-card' }, mod.rules.map((r) => h('li', {}, r))),
+    body: h('div', { class: 'rules-sheet' },
+      h('ol', { class: 'rules-card' }, mod.rules.map((r) => h('li', {}, r))),
+      mod.sides?.length ? h('p', { class: 'label' }, t.sides) : null,
+      sidesBlock(mod)),
     actions: [{ label: t.close, kind: 'primary' }],
   });
 }
@@ -153,7 +157,8 @@ function renderSecret(s) {
   return h('div', { class: 'secret' },
     s.top ? h('p', { class: 'secret-top' }, s.top) : null,
     h('p', { class: 'secret-word' }, s.big),
-    s.bottom ? h('p', { class: 'secret-bottom' }, s.bottom) : null);
+    s.bottom ? h('p', { class: 'secret-bottom' }, s.bottom) : null,
+    s.side ? h('p', { class: 'secret-side' }, s.side) : null);
 }
 
 function holdBlock(secret, onReveal, label) {

@@ -48,6 +48,7 @@ Korean-izing works on three layers: every word of copy, the culture of the games
 - Reactions in short 반말, variety-caption style: "정답!", "아깝다\~", "라이어 검거!", "꽝!"
 - Address players with the vocative: "민지야, 꾹 눌러서 확인해!" / "준혁아, 네 차례야!"
 - Every rules card is exactly 3 lines, each under 20 characters where possible.
+- Below it, a 누구 편? card (each game's `sides`) says who plays with whom and for what, so hidden-role players know which side to play for. 라이어 찾기 and 스무고개 also show the player's side on their secret screen.
 - Button labels are verbs that say what happens: 확인했어요, 다음 사람, 투표하기, 정답 공개.
 
 ### Particle (조사) helper
@@ -303,7 +304,7 @@ The 진행자 and a secret 숨은 조력자 know the word; everyone fires yes/no
 
 ## Game 6 · 겹치면 꽝 (Just One-style)
 
-The 술래 doesn't see the word; the other four each secretly type a one-word clue, identical clues cancel out, and the 술래 guesses from what survives. Cooperative, about 1–2 minutes per word, 10 words per session.
+The 술래 doesn't see the word; the other four each secretly type a one-word clue, identical clues cancel out, and the 술래 guesses from what survives. Cooperative, about 1–2 minutes per word. A session is one card per player by default (5 at 5 players); 3장 and 10장 are options.
 
 **Rules card:**
 
@@ -313,7 +314,7 @@ The 술래 doesn't see the word; the other four each secretly type a one-word cl
 >
 > 남은 힌트로 술래가 맞히면 성공!
 
-**Roles at 5:** 술래 ×1 (rotates every word, so each player is 술래 twice in a 10-word session), 힌트 주는 사람 ×4.
+**Roles at 5:** 술래 ×1 (rotates every word, so with the default deck each player is 술래 once unless a 틀림 burns a card), 힌트 주는 사람 ×4.
 
 **Phases:**
 
@@ -325,13 +326,13 @@ The 술래 doesn't see the word; the other four each secretly type a one-word cl
 
 **Scoring (team):**
 
-| Result | Effect on the 10-word deck |
+| Result | Effect on the deck |
 | --- | --- |
 | 맞음 | +1 point |
 | 패스 | Card discarded, no point |
 | 틀림 | Card discarded and the next card discarded too |
 
-Final team score out of 10 with Korean captions: 10 "완벽해요!", 8–9 "대단해요", 6–7 "괜찮은데?", 4–5 "조금만 더", 0–3 "다시 해봐요".
+Final team score out of the deck size, with captions by share: 100% "완벽해요!", 80%+ "대단해요", 60%+ "괜찮은데?", 40%+ "조금만 더", below that "다시 해봐요" (for 10 cards: 10, 8–9, 6–7, 4–5, 0–3).
 
 **Edge cases:**
 
@@ -339,7 +340,7 @@ Final team score out of 10 with Korean captions: 10 "완벽해요!", 8–9 "대�
 - With 4 clue-givers the original's two-clues variant isn't needed.
 - Duplicate detection never auto-strips particles; the human "같은 말" tap handles 사과 / 사과를 style cases.
 
-**Content used:** `words` at easy and medium difficulty, excluding the 드라마·예능 category (too easy to clue).
+**Content used:** `words` at easy and medium difficulty, excluding the 드라마·예능 and 영화 categories (screen titles are too easy to clue).
 
 ## File structure and module contracts
 
@@ -350,7 +351,7 @@ waiting-game/
 ├── wrangler.jsonc              # Cloudflare config (assets only, no Worker code)
 ├── SPEC.md                     # this spec, exported; every AI prompt references it
 ├── tools/
-│   ├── lint_content.py         # schema, duplicates, banned words, font coverage
+│   ├── lint_content.py         # schema, duplicates, font coverage
 │   └── subset_font.py          # fontTools subset of 도현체 to used syllables
 ├── tests/                      # node --test, no dependencies
 │   ├── josa.test.js  norm.test.js  rng.test.js  store.test.js
@@ -632,18 +633,25 @@ Field rules: `diff` 1 = easy, 2 = medium, 3 = hard; `yesno` marks words guessabl
 | 스포츠·취미 | 50 | 볼링, 등산, 뜨개질, 클라이밍 |
 | 계절·날씨 | 40 | 장마, 첫눈, 벚꽃, 열대야 |
 | 드라마·예능 | 70 | Well-known Korean titles and show formats; 사라지는 힌트 and 라이어 only |
+| 영화 | 50 | 천만 영화 and worldwide hits: 기생충, 부산행, 겨울왕국, 어바웃 타임; like 드라마·예능, kept out of 겹치면 꽝 |
+| 편의점 간식 | 60 | Snack, ice cream, drink and ramen brands: 새우깡, 메로나, 바나나맛우유, 신라면 |
+| 과일 | 30 | 사과, 샤인머스캣, 감귤, 단감; 1-syllable fruits (배, 귤, 감) only as decoys or aliases |
+| 프랜차이즈 | 20 | Coffee, burger, chicken and bakery chains: 스타벅스, 메가커피, 맘스터치, BBQ |
+| 브랜드 | 30 | Stores, fashion, tech and apps: 다이소, 나이키, 카카오톡, 당근마켓 |
+| 캐릭터 | 30 | 뽀로로, 짱구, 피카츄, 라이언, 펭수 |
+| 게임 | 20 | Games a 30s group grew up with: 스타크래프트, 카트라이더, 메이플스토리, 애니팡 |
 
-**Context packs** are filters over tags, chosen on the home screen: **놀이공원** (rides, snacks, souvenirs, generic terms only) and **웨이팅 맛집** (dishes and restaurant words, for the classic Seoul restaurant queue).
+**Context packs** are filters over tags, chosen on the home screen: **놀이공원** (rides, snacks, souvenirs) and **웨이팅 맛집** (dishes and restaurant words, for the classic Seoul restaurant queue).
 
 **Authoring workflow:**
 
 1. Prompt an AI in Korean per category, e.g. "음식 카테고리 단어 80개. 초등학생도 아는 쉬운 단어 50%, 보통 40%, 어려운 10%. 각 단어에 비슷하지만 다른 단어(decoy) 하나씩. JSON으로."
 2. One person reads every list and deletes anything obscure, ambiguous, regional or no fun. Quality beats count: one bad word kills a round.
-3. Run `python tools/lint_content.py`, which checks: valid schema, unique IDs, no duplicate `text` after `norm()`, every `decoy` differs from its word, no syllable outside the 도현체 subset, nothing in a small banned-words list.
+3. Run `python tools/lint_content.py`, which checks: valid schema, unique IDs, no duplicate `text` after `norm()`, every `decoy` differs from its word, no syllable outside the 도현체 subset.
 4. Run `python tools/subset_font.py` to rebuild `dohyeon-sub.woff2` from every character in the content and UI strings.
 5. Commit; deploy.
 
-**Writing rules for content:** words are 2–6 syllables; no brand names in shipped packs (house packs can have them); no real private people; themes in 1부터 10까지 must read naturally on both ends ("하나도 안 무서움" → "소름 끼침").
+**Writing rules for content:** words are 2–6 syllables; no real private people; themes in 1부터 10까지 must read naturally on both ends ("하나도 안 무서움" → "소름 끼침").
 
 ## Offline PWA and iOS specifics
 
@@ -812,7 +820,7 @@ test('liar caught but guesses the word → liar +2', () => {
 });
 ```
 
-**Content (`python tools/lint_content.py`):** schema valid, unique IDs, no duplicate words after normalization, decoys differ, every syllable covered by the font subset, banned words absent.
+**Content (`python tools/lint_content.py`):** schema valid, unique IDs, no duplicate words after normalization, decoys differ, every syllable covered by the font subset.
 
 **Device matrix:** every phone the group owns, installed to the home screen. At minimum one iPhone on iOS 18.4+, one older iPhone on iOS 17, and one Android on current Chrome.
 

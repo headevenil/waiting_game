@@ -20,8 +20,9 @@ function startDescribe(s, now) {
 function secretFor(s, id) {
   const isLiar = id === s.liarId;
   const top = `주제: ${s.topic}`;
-  if (isLiar && s.mode === '일반') return { top, big: '당신은 라이어예요', bottom: '들키지 말고 제시어를 알아내요' };
-  return { top, big: isLiar ? s.decoy : s.word, bottom: '한 문장으로 설명해요' };
+  // 바보 모드 liars get the 시민 screen, side line included: they don't know yet.
+  if (isLiar && s.mode === '일반') return { top, big: '당신은 라이어예요', bottom: '들키지 말고 제시어를 알아내요', side: '나 혼자 한 편' };
+  return { top, big: isLiar ? s.decoy : s.word, bottom: '한 문장으로 설명해요', side: '라이어 빼고 모두 한 편' };
 }
 
 function result(s) {
@@ -40,6 +41,11 @@ export default {
   title: '라이어 찾기',
   rules: ['라이어만 제시어를 몰라요.', '한 명씩 돌아가며 제시어를 한 문장으로 설명해요.',
     '라이어를 찾으면 시민 승! 라이어가 제시어를 맞히면 역전!'],
+  sides: [
+    { team: '시민 팀', who: '라이어 빼고 모두', goal: '라이어를 찾아내요' },
+    { team: '라이어', who: '혼자', goal: '끝까지 숨거나, 들켜도 제시어를 맞혀요' },
+  ],
+  sidesNote: '바보 모드에서는 라이어도 자기가 시민인 줄 알아요.',
   players: { min: 4, max: 6, best: 5 },
   minutes: [3, 5],
   options: OPTIONS,

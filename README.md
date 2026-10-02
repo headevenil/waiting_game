@@ -43,7 +43,7 @@ python tools/lint_content.py
 
 ## Content
 
-Content lives in `public/content/*.ko.json`, one entry per line, so adding a word is a one-line change. The current packs hold 877 words in 17 categories, 150 dial spectrums and 165 1부터 10까지 themes. Run `lint_content.py` after any edit. Banned words go in `tools/banned_words.txt`.
+Content lives in `public/content/*.ko.json`, one entry per line, so adding a word is a one-line change. The current packs hold 1,266 words in 24 categories, 190 dial spectrums and 202 1부터 10까지 themes. Run `lint_content.py` after any edit.
 
 ## Display font (도현체)
 

@@ -33,6 +33,7 @@ export default {
   id: 'dial',
   title: '마음 다이얼',
   rules: ['출제자만 과녁 위치를 봐요.', '양 끝 단어 사이, 과녁 자리에 맞는 힌트를 말해요.', '다 같이 상의해서 바늘을 돌려요. 가까울수록 높은 점수!'],
+  sides: [{ team: '모두 한 팀', who: '출제자 포함', goal: '바늘을 과녁에 맞혀 팀 점수를 모아요' }],
   players: { min: 4, max: 6, best: 5 },
   minutes: [10, 15],
   options: OPTIONS,

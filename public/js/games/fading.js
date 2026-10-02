@@ -5,7 +5,8 @@ import { rng, pick, rotateAfter, othersAfter, roundsFor, withDefaults, nameOf, a
 
 const CLUES = 4;
 const MAX_LEN = 12;
-const CATS = ['음식', '분식·간식', '술·안주', '장소', '동물', '물건', '직업', '놀이공원', '추억', '드라마·예능'];
+const CATS = ['음식', '분식·간식', '편의점 간식', '과일', '술·안주', '장소', '프랜차이즈', '동물', '캐릭터', '물건', '브랜드', '직업',
+  '놀이공원', '게임', '추억', '드라마·예능', '영화'];
 const OPTIONS = { rounds: roundsOption('출제자') };
 
 export function writeError(clues, word) {
@@ -31,6 +32,11 @@ export default {
   id: 'fading',
   title: '사라지는 힌트',
   rules: ['출제자가 제시어에 대한 힌트를 4개 써요.', '폰을 받으면 몰래 정답을 쓰고, 힌트 하나를 지워요.', '맞히면 1점, 출제자는 맞힌 사람 수만큼 점수!'],
+  sides: [
+    { team: '개인전', who: '맞히는 사람', goal: '각자 맞히면 1점' },
+    { team: '출제자', who: '맞히는 사람 편', goal: '모두가 맞힐수록 출제자 점수도 커요' },
+  ],
+  sidesNote: '힌트를 지울 때는 다음 사람이 맞힐 수 있게 좋은 힌트를 남겨요.',
   players: { min: 4, max: 6, best: 5 },
   minutes: [15, 20],
   options: OPTIONS,

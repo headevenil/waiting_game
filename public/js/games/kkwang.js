@@ -2,10 +2,20 @@
 import { josa } from '../i18n/josa.js';
 import { norm, contains, len } from '../i18n/norm.js';
 import { draw } from '../content.js';
-import { rng, rotateAfter, othersAfter, nameOf } from './common.js';
+import { rng, rotateAfter, othersAfter, roundsFor, withDefaults, nameOf } from './common.js';
 
-const DECK = 10;
+// 카드 수. 0 = one card per player; a wrong guess burns the next card, so not everyone is always 술래.
+const OPTIONS = {
+  cards: {
+    label: '카드 수',
+    choices: [{ value: 0, label: '인원수만큼', perPlayer: true, unit: '장' }, { value: 3, label: '3장' }, { value: 10, label: '10장' }],
+    default: 0,
+    note: '카드마다 술래가 바뀌어요. 틀리면 다음 카드도 버려요.',
+  },
+};
 const MAX_LEN = 10;
+// Screen titles are too easy to clue (one 감독 or 배우 gives it away), so they stay out of the deck.
+const TITLES = new Set(['드라마·예능', '영화']);
 
 const guesserOf = (s) => s.leaders[s.played % s.leaders.length];
 const giversOf = (s) => othersAfter(s.players, guesserOf(s));
@@ -29,8 +39,9 @@ function autoCancel(clues) {
   return cancel;
 }
 
-const CAPTIONS = [[10, '완벽해요!'], [8, '대단해요'], [6, '괜찮은데?'], [4, '조금만 더'], [0, '다시 해봐요']];
-const finalCaption = (score) => CAPTIONS.find(([min]) => score >= min)[1];
+// Thresholds are shares of the deck (10 cards: 10, 8, 6, 4).
+const CAPTIONS = [[1, '완벽해요!'], [0.8, '대단해요'], [0.6, '괜찮은데?'], [0.4, '조금만 더'], [0, '다시 해봐요']];
+const finalCaption = (score, max) => CAPTIONS.find(([min]) => score >= min * max)[1];
 
 const REVEAL = {
   correct: { caption: '정답!', tone: 'good' },
@@ -41,21 +52,25 @@ const REVEAL = {
 
 function result(s) {
   if (s.phase !== 'final') return null;
-  return { caption: finalCaption(s.score), tone: s.score >= 6 ? 'good' : 'neutral', points: {}, team: { score: s.score, max: DECK } };
+  const max = s.deck.length;
+  return { caption: finalCaption(s.score, max), tone: s.score >= max * 0.6 ? 'good' : 'neutral', points: {}, team: { score: s.score, max } };
 }
 
 export default {
   id: 'kkwang',
   title: '겹치면 꽝',
   rules: ['술래만 제시어를 몰라요.', '나머지는 몰래 한 단어 힌트를 써요. 겹치면 꽝!', '남은 힌트로 술래가 맞히면 성공!'],
+  sides: [{ team: '모두 한 팀', who: '술래 포함', goal: '많이 맞혀 팀 점수를 모아요' }],
+  sidesNote: '남과 겹치지 않을 힌트를 고르는 게 팀플레이예요.',
   players: { min: 4, max: 6, best: 5 },
-  minutes: [10, 15],
-  options: {},
+  minutes: [5, 10],
+  options: OPTIONS,
 
-  init({ players, content, seed, fairness }) {
+  init({ players, options, content, seed, fairness }) {
+    const o = withDefaults(options, OPTIONS);
     const r = rng(seed);
-    const pool = content.words.filter((w) => w.diff <= 2 && w.cat !== '드라마·예능');
-    const deck = draw(r, pool, DECK, content.recent?.words).map((w) => ({ id: w.id, text: w.text, aliases: w.aliases ?? [] }));
+    const pool = content.words.filter((w) => w.diff <= 2 && !TITLES.has(w.cat));
+    const deck = draw(r, pool, roundsFor(o.cards, players), content.recent?.words).map((w) => ({ id: w.id, text: w.text, aliases: w.aliases ?? [] }));
     return {
       phase: 'setup', players, deck, idx: 0, played: 0,
       leaders: rotateAfter(players, fairness?.lastLeader?.kkwang),
@@ -122,7 +137,8 @@ export default {
 
   view(s) {
     const name = (id) => nameOf(s, id);
-    const round = `${Math.min(s.idx + 1, DECK)}/${DECK}`;
+    const D = s.deck.length;
+    const round = `${Math.min(s.idx + 1, D)}/${D}`;
     const g = guesserOf(s);
     const c = card(s);
     switch (s.phase) {
@@ -195,7 +211,7 @@ export default {
         const res = result(s);
         return {
           key: 'final', screen: 'result', undo: true,
-          props: { caption: res.caption, tone: res.tone, big: `${s.score} / ${DECK}`, lines: [{ label: '팀 점수', value: `${s.score}점` }], deck: s.results },
+          props: { caption: res.caption, tone: res.tone, big: `${s.score} / ${D}`, lines: [{ label: '팀 점수', value: `${s.score}점` }], deck: s.results },
         };
       }
     }

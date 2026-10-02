@@ -55,6 +55,7 @@ export const t = {
   // rules screen
   start: '시작하기',
   howToPlay: '이렇게 놀아요',
+  sides: '누구 편?',
   options: '설정',
   tooFew: (min) => `${min}명 이상 있어야 해요`,
   tooMany: (max) => `${max}명까지만 할 수 있어요`,

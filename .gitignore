@@ -2,3 +2,7 @@ node_modules/
 .wrangler/
 __pycache__/
 .DS_Store
+
+# Local tooling scratch (Claude preview config, browser test harness)
+.claude/
+tests/_browser/

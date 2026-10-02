@@ -32,6 +32,7 @@ export default {
   id: 'scale10',
   title: '1부터 10까지',
   rules: ['선장 빼고 모두 비밀 숫자(1~10)를 받아요.', '주제에 맞춰, 내 숫자만큼의 강도로 대답해요.', '선장이 작은 수부터 순서대로 맞히면 성공!'],
+  sides: [{ team: '모두 한 팀', who: '선장 포함', goal: '순서를 맞혀 하트 8개를 지켜요' }],
   players: { min: 4, max: 6, best: 5 },
   minutes: [10, 15],
   options: OPTIONS,
